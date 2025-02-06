@@ -1,25 +1,5 @@
 // This is the main js file
 
-// hard code a map in a 2d array
-let map = [
-  ["#", "#", "#", "#"],
-  ["#", ".", ".", "#"],
-  ["#", ".", "a", "#"],
-  ["#", "#", "#","#"],
-];
-
-// copy the map
-// need to be able to reference the layout of the map
-// the monsters and player will walk over the map
-// some items need to stay on the map even if the 
-// character walks over it
-let mapCopy = JSON.parse(JSON.stringify(map));
-
-// [0,1,2]
-// get length and width of map for looping over map
-const MAX_Y = map.length;
-const MAX_X = map[0].length;
-
 // this function will turn a map into a string to be
 // used in an HTML <pre> block
 // takes a 2d map array
@@ -94,7 +74,8 @@ function movePlayer(playerLocation, direction) {
     || targetLocation.y < 0 
     || targetLocation.y > MAX_Y
   ) {
-    return console.log("OUT OF BOUNDS");
+    console.log("OUT OF BOUNDS");
+    return playerLocation;
   } else {
     console.log(targetLocation);
   }
@@ -104,15 +85,18 @@ function movePlayer(playerLocation, direction) {
 
   // // target location is not a wall
   if (targetLocationValue === "#") {
-    return (console.log("Wall"));
+    console.log("Wall")
+    return playerLocation;
   }
   // // target location is not a closed door
   if (targetLocationValue === "D") {
-    return (console.log("Door"));
+    console.log("Door")
+    return playerLocation;
   }
   // // target location is not a monster
   if (targetLocationValue === "a") {
-    return (console.log("Arachnid"));
+    console.log("Arachnid")
+    return playerLocation;
   }
   // check move target location is valid
   // if valid check if empty space
@@ -127,9 +111,30 @@ function movePlayer(playerLocation, direction) {
     printMap(generateMapLayout(mapCopy));
     placePlayerToken(mapCopy,{x:targetLocation.x, y:targetLocation.y});
     printMap(generateMapLayout(mapCopy));
-    return;
+    return {x: targetLocation.x, y:targetLocation.y};
   }
 }
+
+// START
+// hard code a map in a 2d array
+let map = [
+  ["#", "#", "#", "#"],
+  ["#", ".", ".", "D"],
+  ["#", ".", "a", "#"],
+  ["#", "#", "#","#"],
+];
+
+// copy the map
+// need to be able to reference the layout of the map
+// the monsters and player will walk over the map
+// some items need to stay on the map even if the 
+// character walks over it
+let mapCopy = JSON.parse(JSON.stringify(map));
+
+// [0,1,2]
+// get length and width of map for looping over map
+const MAX_Y = map.length;
+const MAX_X = map[0].length;
 let mapLayout = generateMapLayout(mapCopy);
 console.log(mapLayout);
 printMap(mapLayout);
@@ -137,20 +142,24 @@ placePlayerToken(mapCopy, {x: 1,y: 1});
 printMap(generateMapLayout(mapCopy));
 // setTimeout(({x=1,y=1}) => placePlayerToken, 1000);
 //console.log(map_string);
-console.log(map[2][1]);
+//console.log(map[2][1]);
 let playerLocation = locatePlayer("@", mapCopy);
 console.log("PLayer Location: ", JSON.stringify(playerLocation));
 
 // Event listener for player movement
 addEventListener('keydown', function (e) {
-
 let direction = "";
 
 // TODO: Player location not being updated after playerMove
-if (e.key === "w" | e.key === "ArrowUp") {movePlayer(playerLocation,"up")}
-if (e.key === "a" | e.key === "ArrowLeft") {movePlayer(playerLocation,"left")}
-if (e.key === "s" | e.key === "ArrowDown") {movePlayer(playerLocation,"down")}
-if (e.key === "d" | e.key === "ArrowRight") {movePlayer(playerLocation,"right")}
-
+if (e.key === "w" || e.key === "ArrowUp") {
+  playerLocation = movePlayer(playerLocation,"up")}
+if (e.key === "a" || e.key === "ArrowLeft") {
+  playerLocation = movePlayer(playerLocation,"left")}
+if (e.key === "s" || e.key === "ArrowDown") {
+  playerLocation = movePlayer(playerLocation,"down")}
+if (e.key === "d" || e.key === "ArrowRight") {
+  playerLocation = movePlayer(playerLocation,"right")}
 // console.log(direction);
 })
+
+// END
